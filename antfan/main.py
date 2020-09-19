@@ -20,7 +20,7 @@ if __name__ == "__main__":
             break
 
     antnode.shutdown()
-    discreteFan.off()
+    discreteFan.disable_software_control()
     print(f'stopped.')
 else:
     raise ImportError("Run this file directly, don't import it!")
