@@ -1,5 +1,6 @@
 import time
 
+from antfan import webui
 from antfan.ant_com import AntNode
 from antfan.controller import FanController
 from antfan.hardware import DiscreteFan

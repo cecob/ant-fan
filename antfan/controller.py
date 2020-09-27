@@ -2,11 +2,11 @@ from antfan.hardware import DiscreteFan
 
 
 def map_to_power_level(computed_heart_rate):
-    if computed_heart_rate > 150:
+    if computed_heart_rate > 155:
         return 3
-    elif computed_heart_rate > 130:
+    elif computed_heart_rate > 140:
         return 2
-    elif computed_heart_rate > 100:
+    elif computed_heart_rate > 120:
         return 1
     return 0
 

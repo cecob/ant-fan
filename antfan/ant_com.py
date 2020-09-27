@@ -3,12 +3,13 @@ from ant.core.exceptions import ANTException
 from ant.core.node import Node, Network
 from ant.core.constants import NETWORK_KEY_ANT_PLUS, NETWORK_NUMBER_PUBLIC
 from ant.plus.heartrate import *
-
+import os
 
 class AntNode:
     deviceProfile: [DeviceProfile] = []
 
     def __init__(self):
+        os.system("usbreset 001/002")
         self.node = Node(driver.USB2Driver())
         self.network = Network(key=NETWORK_KEY_ANT_PLUS, name='N:ANT+')
         pass
