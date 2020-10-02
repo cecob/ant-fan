@@ -39,7 +39,7 @@ class AntNode:
     deviceManager: [DeviceManager] = []
 
     def __init__(self):
-        os.system("usbreset 001/002")
+        os.system("usbreset 0fcf:1008")
         self.node = Node(driver.USB2Driver())
         self.network = Network(key=NETWORK_KEY_ANT_PLUS, name='N:ANT+')
 

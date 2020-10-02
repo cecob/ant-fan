@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 import statistics
 from dataclasses import dataclass
+from enum import Enum
 from math import sqrt
 from time import time
 
 from antfan import logger
 from bikecomputer.antnode import AntNode
 from bikecomputer.sensor import DataSeries, wahoo_heart_rate_sensor
+
+
+class Event(Enum):
+    DATA_AVAILABLE = 1
 
 
 @dataclass
@@ -20,11 +25,20 @@ class Measurement:
         self.ttl = ttl
         self.name = name
         self.samples: [Sample] = []
+        self.subscribers = {
+            Event.DATA_AVAILABLE: [],
+        }
 
     def add_sample(self, sampled_value: Sample):
         self.samples.append(sampled_value)
         # remove old values
         self.samples = self.select_newest_samples(self.ttl)
+
+        if len(self.samples) > 0:
+            data_available_subs = self.subscribers[Event.DATA_AVAILABLE]
+            for sub in list(data_available_subs):
+                sub(self)
+                data_available_subs.remove(sub)
 
     def select_newest_samples(self, max_seconds: int):
         now = time()
@@ -32,6 +46,13 @@ class Measurement:
 
     def select_newest_values(self, max_seconds: int):
         return [s.value for s in self.select_newest_samples(max_seconds)]
+
+    def subscribe_once(self, event, callback):
+        if event == Event.DATA_AVAILABLE:
+            if len(self.samples) != 0:
+                callback(self)
+            else:
+                self.subscribers[event].append(callback)
 
 
 class BikeComputer:
@@ -49,6 +70,13 @@ class BikeComputer:
             )
 
         logger.info('init completed. starting ant communication')
+
+    def subscribe_once(self, event: Event, series: DataSeries, callback):
+        if series in self.measurements:
+            self.measurements[series].subscribe_once(event, callback)
+            return self
+        else:
+            raise Exception("unable to subscribe to data series, since it is not tracked")
 
     def _process_heart_rate_data(self, heart_rate, total_time, rr_interval):
         now = time()

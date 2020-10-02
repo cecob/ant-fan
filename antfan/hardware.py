@@ -1,3 +1,5 @@
+from time import sleep
+
 from gpiozero import OutputDevice, DigitalOutputDevice
 
 from antfan import logger
@@ -43,6 +45,17 @@ class DiscreteFan:
     def __init__(self):
         self.current_power_level = None
         self.set_power_level(0)
+
+    def say_hallo(self):
+        logger.info('hi')
+        self.__r3.value = True
+        sleep(0.25)
+        self.__r2.value = True
+        sleep(0.25)
+        self.__r3.value = False
+        sleep(0.25)
+        self.__r2.value = False
+
 
     def set_power_level(self, power_level):
         if power_level == self.current_power_level or power_level > 3 or power_level < 0:
