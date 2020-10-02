@@ -1,8 +1,8 @@
-import antfan
+import bikecomputer
 import logging
 
 # create logger
-logger = logging.getLogger('antfan')
+logger = logging.getLogger('bikecomputer')
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)

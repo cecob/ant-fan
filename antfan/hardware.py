@@ -1,4 +1,6 @@
-from gpiozero import OutputDevice
+from gpiozero import OutputDevice, DigitalOutputDevice
+
+from antfan import logger
 
 
 class DiscreteFan:
@@ -22,7 +24,9 @@ class DiscreteFan:
 
         Layout is mainly due to place restriction inside of the AC-Box of the fan and is designed to
         use the MC in case the program is not running.
-        So R4 switches between 1=mechanical control (MC) and 0=software control (SC)
+        So R4 switches between 1=mechanical control (MC) and 0=software control (SC).
+        Note: R4 is hardwired to GND so its always off as long as the pi is powered
+
         R2 and R3 are used to set the power level as:
         R2 | R3 || PL
          0 | 0  || 3
@@ -35,29 +39,17 @@ class DiscreteFan:
     __r1 = OutputDevice(16)
     __r2 = OutputDevice(20)
     __r3 = OutputDevice(21)
-    __r4 = OutputDevice(12)
 
     def __init__(self):
-        self.__last_power_level = None
+        self.current_power_level = None
         self.set_power_level(0)
 
-    def disable_software_control(self):
-        self.__r4.on()
-
-    def enable_software_control(self):
-        self.__r4.off()
-
     def set_power_level(self, power_level):
-
-        if power_level == self.__last_power_level or power_level > 3 or power_level < 0:
+        if power_level == self.current_power_level or power_level > 3 or power_level < 0:
             return None
 
-        if self.__last_power_level is None:
-            self.enable_software_control()
-
-        print(f'changing power level to {power_level}')
-        # reversed
-        self.__last_power_level = power_level
+        logger.info(f'changing power level to {power_level}')
+        self.current_power_level = power_level
         self.__r1.value = power_level == 0
         self.__r2.value = power_level == 2
         self.__r3.value = power_level == 1

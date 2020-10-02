@@ -1,0 +1,12 @@
+# /etc/systemd/system/antfan.service
+[Unit]
+Description=Ant Fan Service
+
+[Service]
+Type=simple
+User=pi
+EnvironmentFile=/etc/antfan/antfan.conf
+ExecStart=/usr/bin/python3 -u ${APP_ROOT}/antfan/main.py
+
+[Install]
+WantedBy=multi-user.target
